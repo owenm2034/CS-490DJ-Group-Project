@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>Wireless Network Advisor.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>9AF85AEE2CECF71C00936C3E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9AF85AFF2CECF71D00936C3E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9AF85B092CECF71D00936C3E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>
