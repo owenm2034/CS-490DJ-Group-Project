@@ -74,7 +74,16 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
 
     @objc func startCapture() {
         // This is where you'd integrate your packet capture code
-        print("Starting packet capture...")
+//        print("Starting packet capture...")
+        let dev = "en0"  // Wi-Fi interface on macOS (adjust as needed)
+            
+            // Convert Swift String to C String
+            let cString = dev.cString(using: .utf8)
+            
+            // Call the C function
+            if let cString = cString {
+                start_capture(cString)
+        }
     }
 
     @objc func quitApp() {

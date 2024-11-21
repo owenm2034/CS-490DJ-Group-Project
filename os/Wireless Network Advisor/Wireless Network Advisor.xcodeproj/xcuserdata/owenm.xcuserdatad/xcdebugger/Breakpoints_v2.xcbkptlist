@@ -36,5 +36,51 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "462C52D7-7F76-4D74-84FB-A7C1F7DE2CD4"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Wireless Network Advisor/MenuBar.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
+            landmarkName = "startCapture()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "462C52D7-7F76-4D74-84FB-A7C1F7DE2CD4 - a69c575956fe75d5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Wireless_Network_Advisor.AppDelegate.startCapture() -&gt; ()"
+                  moduleName = "Wireless Network Advisor.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/owenm/src/CS-490-Group-Project/os/Wireless%20Network%20Advisor/Wireless%20Network%20Advisor/MenuBar.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "84"
+                  endingLineNumber = "84">
+               </Location>
+               <Location
+                  uuid = "462C52D7-7F76-4D74-84FB-A7C1F7DE2CD4 - a69c575956fe75d5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Wireless_Network_Advisor.AppDelegate.startCapture() -&gt; ()"
+                  moduleName = "Wireless Network Advisor.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/owenm/src/CS-490-Group-Project/os/Wireless%20Network%20Advisor/Wireless%20Network%20Advisor/MenuBar.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "84"
+                  endingLineNumber = "84">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
