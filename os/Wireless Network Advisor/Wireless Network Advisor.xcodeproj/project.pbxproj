@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9AF85B2B2CED04B900936C3E /* libpcap.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AF85B2A2CED04B900936C3E /* libpcap.tbd */; platformFilters = (macos, ); };
+		9AF85B312CEEC2DB00936C3E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 9AF85B302CEEC2D500936C3E /* .gitignore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +33,7 @@
 		9AF85B002CECF71D00936C3E /* Wireless Network AdvisorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Wireless Network AdvisorTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AF85B0A2CECF71D00936C3E /* Wireless Network AdvisorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Wireless Network AdvisorUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AF85B2A2CED04B900936C3E /* libpcap.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libpcap.tbd; path = usr/lib/libpcap.tbd; sourceTree = SDKROOT; };
+		9AF85B302CEEC2D500936C3E /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -81,6 +83,7 @@
 		9AF85AE62CECF71C00936C3E = {
 			isa = PBXGroup;
 			children = (
+				9AF85B302CEEC2D500936C3E /* .gitignore */,
 				9AF85AF12CECF71C00936C3E /* Wireless Network Advisor */,
 				9AF85B032CECF71D00936C3E /* Wireless Network AdvisorTests */,
 				9AF85B0D2CECF71D00936C3E /* Wireless Network AdvisorUITests */,
@@ -228,6 +231,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9AF85B312CEEC2DB00936C3E /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
