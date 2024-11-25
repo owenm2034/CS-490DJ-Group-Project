@@ -16,12 +16,24 @@ public func runTcpdump() {
     var errorDescription: NSString?
     
     // Call the Objective-C method
+//    let success = processRunner.runProcess(
+//        asAdministrator: "/usr/bin/id",
+//            withArguments: ["-un"],
+//            output: &output,
+//            errorDescription: &errorDescription
+//        )
     let success = processRunner.runProcess(
-        asAdministrator: "/usr/bin/id",
-            withArguments: ["-un"],
-            output: &output,
-            errorDescription: &errorDescription
-        )
+        asAdministrator: "/usr/bin/sudo",
+        withArguments: [
+            "/usr/sbin/tcpdump",
+            "-i", "en0",
+            "-A",
+            "port", "80", "or", "port", "443"
+        ],
+        output: &output,
+        errorDescription: &errorDescription
+    )
+
     
     // Handle the result
     if success {
