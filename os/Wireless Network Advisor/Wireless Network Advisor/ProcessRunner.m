@@ -21,7 +21,6 @@
 
     NSDictionary *errorInfo = [NSDictionary new];
     NSString *script = [NSString stringWithFormat:
-//                        @"do shell script \"%@\" with administrator privileges"
                         @"do shell script \"%@\" with administrator privileges"
                         ,
                         fullScript];
