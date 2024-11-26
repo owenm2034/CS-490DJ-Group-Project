@@ -108,8 +108,15 @@
 
 + (BOOL)runProcessAsAdministratorPipeOutput:(NSString *)scriptPath
                     withArguments:(NSArray<NSString *> *)arguments
-                                       pipe:(NSString *)outputPipe  // Pass NSPipe pointer
+                                       pipe:(NSURL *)outputPipe  // Pass NSPipe pointer
                  errorDescription:(NSString **)errorDescription {
+    
+    /// notes for me tomorrow:
+    ///     - write output to a temp file
+    ///     - read that file in async
+    ///     - do stuff
+    ///     - win
+    ///     - use FileManager.default.temporaryDirectory in swift to spawn a temp directory
 
     // Join script path and arguments into a single command string
     NSString *allArgs = [arguments componentsJoinedByString:@" "];
@@ -121,7 +128,7 @@
 
     // Create the AppleScript that runs the shell command with administrator privileges
     NSString *appleScriptSource = [NSString stringWithFormat:
-        @"do shell script \"%@ /path/to/output.txt 2>&1\" with administrator privileges", fullScriptCommand];
+                                   @"do shell script \"%@ > %@\" with administrator privileges", fullScriptCommand, outputPipe.path];
 
     // Use osascript to run the AppleScript from the command line
     NSTask *task = [[NSTask alloc] init];
@@ -129,8 +136,8 @@
     [task setArguments:@[@"-e", appleScriptSource]];
 
     // Set provided NSPipe for standard output and error
-    [task setStandardOutput:outputPipe];
-    [task setStandardError:outputPipe];
+//    [task setStandardOutput:outputPipe];
+//    [task setStandardError:outputPipe];
 
     @try {
         [task launch];
@@ -144,7 +151,7 @@
 
 + (void)executeAdminProcessWithPipe:(NSString *)scriptPath
                            arguments:(NSArray<NSString *> *)arguments
-                                pipe:(NSPipe *)outputPipe {
+                                pipe:(NSURL *)outputPipe {
     
     // Launch the process asynchronously on a background thread
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -163,21 +170,21 @@
     });
 
     // Read the output from the pipe asynchronously on the main thread
-    NSFileHandle *readHandle = [outputPipe fileHandleForReading];
+//    NSFileHandle *readHandle = [outputPipe fileHandleForReading];
     NSLog(@"Process is reading the pipe");
     
     // Set up a block to read data when it becomes available
-    [readHandle setReadabilityHandler:^(NSFileHandle *handle) {
-        NSData *data = [handle availableData];
-        
-        if (data.length > 0) {
-            NSString *output = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            NSLog(@"Output: %@", output);  // Process or display output here
-        } else {
-            // End of data, clean up
-            [readHandle setReadabilityHandler:nil];
-        }
-    }];
+//    [readHandle setReadabilityHandler:^(NSFileHandle *handle) {
+//        NSData *data = [handle availableData];
+//        
+//        if (data.length > 0) {
+//            NSString *output = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//            NSLog(@"Output: %@", output);  // Process or display output here
+//        } else {
+//            // End of data, clean up
+//            [readHandle setReadabilityHandler:nil];
+//        }
+//    }];
 }
 
 

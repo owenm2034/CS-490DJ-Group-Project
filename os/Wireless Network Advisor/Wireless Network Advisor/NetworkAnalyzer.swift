@@ -57,11 +57,20 @@ public func tcpDumpWithPipe() {
                                       pipe: tempFileURL)
     
     // Asynchronously read the output
-    let readHandle = pipe.fileHandleForReading
-    readHandle.readabilityHandler = { handle in
-        let data = handle.availableData
-        if let output = String(data: data, encoding: .utf8), !output.isEmpty {
-            print("Output: \(output)")
+    do {
+        let readHandle = try FileHandle(forReadingFrom: tempFileURL)
+        
+        readHandle.readabilityHandler = { handle in
+            let data = handle.availableData
+            if let output = String(data: data, encoding: .utf8), !output.isEmpty {
+                print("Output: \(output)")
+            }
         }
+        
+        // Keep the process running to read continuously
+        RunLoop.current.run()
+
+    } catch {
+        print("Error reading file: \(error)")
     }
 }

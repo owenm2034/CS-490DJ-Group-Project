@@ -28,12 +28,12 @@
 
 + (BOOL)runProcessAsAdministratorPipeOutput:(NSString *)scriptPath
                     withArguments:(NSArray<NSString *> *)arguments
-                           pipe:(NSPipe *)outputPipe  // Pass NSPipe pointer
+                           pipe:(NSURL *)outputPipe  // Pass NSPipe pointer
                  errorDescription:(NSString **)errorDescription;
 
 + (void)executeAdminProcessWithPipe:(NSString *)scriptPath
                            arguments:(NSArray<NSString *> *)arguments
-                                pipe:(NSString *)outputPipe;
+                               pipe:(NSURL *)outputPipe;
 
 @end
 
