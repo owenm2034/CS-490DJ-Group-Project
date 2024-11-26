@@ -43,7 +43,7 @@ public func runTcpdump() {
 }
 
 public func tcpDumpWithPipe() {
-    let pipe = Pipe()  // Create an NSPipe equivalent in Swift
+//    let pipe = Pipe()  // Create an NSPipe equivalent in Swift
     let tempDirectory = FileManager.default.temporaryDirectory
     let tempFileURL = tempDirectory.appendingPathComponent("my_temp_file.txt")
     

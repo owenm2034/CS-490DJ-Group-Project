@@ -12,21 +12,13 @@ import Cocoa
 struct MenuBarApp: App {
     @State var currentNumber: String = "1"
 //    let runner = AsyncProcessRunner()
-    var body: some Scene {
-
-        
+    var body: some Scene {        
         MenuBarExtra(currentNumber, systemImage: "\(currentNumber).circle") {
             // 3
 //            let analyzer = Analyzer()
             Button("Start Capture") {
                 self.currentNumber = "1"
-//                appDelegate.startCapture()
-//                runTcpdump()
-//              runWhoAmI()
                 tcpDumpWithPipe()
-//                DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-//                    runner.stopTask()
-//                }
             }
             Button("Stop") {
                 self.currentNumber = "2"
