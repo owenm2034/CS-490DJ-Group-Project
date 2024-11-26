@@ -21,10 +21,19 @@
  @param errorDescription A pointer to a string to capture any error messages.
  @return YES if the script executes successfully, NO otherwise.
  */
-- (BOOL)runProcessAsAdministrator:(NSString *)scriptPath
++ (BOOL)runProcessAsAdministrator:(NSString *)scriptPath
                     withArguments:(NSArray<NSString *> *)arguments
                            output:(NSString **)output
                  errorDescription:(NSString **)errorDescription;
+
++ (BOOL)runProcessAsAdministratorPipeOutput:(NSString *)scriptPath
+                    withArguments:(NSArray<NSString *> *)arguments
+                           pipe:(NSPipe *)outputPipe  // Pass NSPipe pointer
+                 errorDescription:(NSString **)errorDescription;
+
++ (void)executeAdminProcessWithPipe:(NSString *)scriptPath
+                           arguments:(NSArray<NSString *> *)arguments
+                                pipe:(NSString *)outputPipe;
 
 @end
 

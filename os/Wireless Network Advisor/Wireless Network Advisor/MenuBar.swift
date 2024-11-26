@@ -11,7 +11,7 @@ import Cocoa
 @main
 struct MenuBarApp: App {
     @State var currentNumber: String = "1"
-    let runner = AsyncProcessRunner()
+//    let runner = AsyncProcessRunner()
     var body: some Scene {
 
         
@@ -21,7 +21,9 @@ struct MenuBarApp: App {
             Button("Start Capture") {
                 self.currentNumber = "1"
 //                appDelegate.startCapture()
-                runner.runCommandAsAdministrator()
+//                runTcpdump()
+//              runWhoAmI()
+                tcpDumpWithPipe()
 //                DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
 //                    runner.stopTask()
 //                }
