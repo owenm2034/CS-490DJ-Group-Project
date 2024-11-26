@@ -42,35 +42,56 @@ public func runTcpdump() {
     }
 }
 
-public func tcpDumpWithPipe() {
-//    let pipe = Pipe()  // Create an NSPipe equivalent in Swift
-    let tempDirectory = FileManager.default.temporaryDirectory
-    let tempFileURL = tempDirectory.appendingPathComponent("my_temp_file.txt")
-    
-    // Call the Objective-C method
-    ProcessRunner.executeAdminProcess(withPipe: "/usr/sbin/tcpdump",
-                                      arguments: [
-                                                    "-i", "en0",
-                                                    "-A",
-                                                    "port", "80", "or", "port", "443"
-                                      ],
-                                      pipe: tempFileURL)
-    
-    // Asynchronously read the output
-    do {
-        let readHandle = try FileHandle(forReadingFrom: tempFileURL)
-        
-        readHandle.readabilityHandler = { handle in
-            let data = handle.availableData
-            if let output = String(data: data, encoding: .utf8), !output.isEmpty {
-                print("Output: \(output)")
-            }
-        }
-        
-        // Keep the process running to read continuously
-        RunLoop.current.run()
-
-    } catch {
-        print("Error reading file: \(error)")
-    }
-}
+//public func tcpDumpWithPipe() {
+////    let pipe = Pipe()  // Create an NSPipe equivalent in Swift
+//    let tempDirectory = FileManager.default.temporaryDirectory
+//    let tempFileURL = tempDirectory.appendingPathComponent("my_temp_file.txt")
+//    do {
+//        try Data().write(to: tempFileURL, options: .atomic)
+////        print("File cleared: \(fileURL.path)")
+//    } catch {
+//        print("Error clearing file: \(error.localizedDescription)")
+//    }
+//    
+//    // Call the Objective-C method
+//    ProcessRunner.executeAdminProcess(withPipe: "/usr/sbin/tcpdump",
+//                                      arguments: [
+//                                                    "-i", "en0",
+//                                                    "-s", "0",
+//                                                    "port", "80"
+////                                                    ,"or", "port", "443"
+//                                      ],
+//                                      pipe: tempFileURL)
+//    
+//    // Asynchronously read the output
+//    do {
+//        let readHandle = try FileHandle(forReadingFrom: tempFileURL)
+//        let writeHandle = try FileHandle(forWritingTo: tempFileURL)
+//        
+//        readHandle.readabilityHandler = { handle in
+//            let data = handle.availableData
+//            if let output = String(data: data, encoding: .utf8), !output.isEmpty {
+//                // Split the data by lines
+//                let lines = output.components(separatedBy: .newlines).filter { !$0.isEmpty }
+//                
+//                for line in lines {
+//                    print("\(line)")
+//                }
+//                
+//                // Move the file pointer to the beginning for rewriting
+//                writeHandle.seek(toFileOffset: 0)
+//                
+//                // Remove processed lines and write the remainder
+//                let remainingData = Data()
+//                try? remainingData.write(to: tempFileURL, options: .atomic)
+//            }
+//        }
+//        
+//        // Keep the process running to read continuously
+//        RunLoop.current.run()
+//        
+//    } catch {
+//        print("Error handling file: \(error)")
+//    }
+//
+//}
