@@ -14,7 +14,7 @@ struct MenuBarApp: App {
     @State var insecurePacketCount: Int = 0
     @State var running = false
 //    let runner = AsyncProcessRunner()
-    var body: some Scene {        
+    var body: some Scene {
 //        MenuBarExtra(currentNumber, systemImage: "\(currentNumber).circle") {
         MenuBarExtra("\(insecurePacketCount)", systemImage: "hammer") {
             // 3
@@ -22,14 +22,20 @@ struct MenuBarApp: App {
             Button("Start Capture") {
                 if (!running) {
 //                    self.currentNumber = "1"
-                    DispatchQueue.global().async {
-                        withUnsafeMutablePointer(to: &insecurePacketCount) { pointer in
-                            tcpDumpWithPipe(countPointer: pointer)  // Call capturePackets and pass the pointer
-                        }
+                    
+//                    Task.detached {
+                    DispatchQueue.global(qos: .background).async {
+//                        withUnsafeMutablePointer(to: &insecurePacketCount) { pointer in
+                            tcpDumpWithPipe()  // Call capturePackets and pass the pointer
+//                        }
                     }
                     running = true
+//                    while(true) {
+//                        print(insecurePacketCount)
+//                    }
                 }
             }
+            
             Button("Stop") {
                 self.currentNumber = "2"
                 print(insecurePacketCount)
@@ -54,7 +60,7 @@ struct MenuBarApp: App {
         }
     }
     
-    public func tcpDumpWithPipe(countPointer: UnsafeMutablePointer<Int>) {
+    public func tcpDumpWithPipe() {
     //    let pipe = Pipe()  // Create an NSPipe equivalent in Swift
         let tempDirectory = FileManager.default.temporaryDirectory
         let tempFileURL = tempDirectory.appendingPathComponent("my_temp_file.txt")
@@ -89,16 +95,17 @@ struct MenuBarApp: App {
                     
                     for line in lines {
                         print("\(line)")
-                        print(countPointer.pointee);
-                        countPointer.pointee += 1
+//                        print(countPointer.pointee);
+//                        countPointer.pointee += 1
                         DispatchQueue.main.async {
                             // Use the pointer value to update the state (insecurePacketCount)
                            print("doing a thing")
-                            insecurePacketCount = countPointer.pointee
+                            insecurePacketCount += 1
                             print("increment");
-                            MenuBarApp.objectWillChange.send()
+//                            MenuBarApp.objectWillChange.send()
                         }
                     }
+                    
                     
                     // Move the file pointer to the beginning for rewriting
                     writeHandle.seek(toFileOffset: 0)
@@ -110,6 +117,10 @@ struct MenuBarApp: App {
             }
             
             // Keep the process running to read continuously
+            let timer = Timer(timeInterval: 2.0, repeats: true) { _ in }
+            RunLoop.current.add(timer, forMode: .default)
+            
+            // Start the RunLoop
             RunLoop.current.run()
             
         } catch {
