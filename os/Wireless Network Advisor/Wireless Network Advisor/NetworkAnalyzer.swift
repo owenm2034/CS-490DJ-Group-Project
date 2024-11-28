@@ -2,7 +2,7 @@ import Foundation
 
 public func runTcpdump() {
     // Create an instance of the ProcessRunner
-//    let processRunner = ProcessRunner()
+    //    let processRunner = ProcessRunner()
     
     // Define variables to hold output and error messages
     var output: NSString?
@@ -11,22 +11,22 @@ public func runTcpdump() {
     // Call the Objective-C method
     let success = ProcessRunner.runProcess(
         asAdministrator: "/usr/bin/id",
-            withArguments: ["-un"],
-            output: &output,
-            errorDescription: &errorDescription
-        )
-//    let success = processRunner.runProcess(
-//        asAdministrator: "/usr/bin/sudo",
-//        withArguments: [
-//            "/usr/sbin/tcpdump",
-//            "-i", "en0",
-//            "-A",
-//            "port", "80", "or", "port", "443"
-//        ],
-//        output: &output,
-//        errorDescription: &errorDescription
-//    )
-
+        withArguments: ["-un"],
+        output: &output,
+        errorDescription: &errorDescription
+    )
+    //    let success = processRunner.runProcess(
+    //        asAdministrator: "/usr/bin/sudo",
+    //        withArguments: [
+    //            "/usr/sbin/tcpdump",
+    //            "-i", "en0",
+    //            "-A",
+    //            "port", "80", "or", "port", "443"
+    //        ],
+    //        output: &output,
+    //        errorDescription: &errorDescription
+    //    )
+    
     
     // Handle the result
     if success {

@@ -13,60 +13,60 @@ struct MenuBarApp: App {
     @State var currentNumber: String = "1"
     @State var insecurePacketCount: Int = 0
     @State var running = false
-//    let runner = AsyncProcessRunner()
+    //    let runner = AsyncProcessRunner()
     var body: some Scene {
-//        MenuBarExtra(currentNumber, systemImage: "\(currentNumber).circle") {
-        MenuBarExtra("\(insecurePacketCount)", systemImage: "hammer") {
+        //        MenuBarExtra(currentNumber, systemImage: "\(currentNumber).circle") {
+        MenuBarExtra("\(insecurePacketCount)", systemImage: "network.badge.shield.half.filled") {
             // 3
-//            let analyzer = Analyzer()
+            //            let analyzer = Analyzer()
             Button("Start Capture") {
                 if (!running) {
-//                    self.currentNumber = "1"
+                    //                    self.currentNumber = "1"
                     
-//                    Task.detached {
+                    //                    Task.detached {
                     DispatchQueue.global(qos: .background).async {
-//                        withUnsafeMutablePointer(to: &insecurePacketCount) { pointer in
-                            tcpDumpWithPipe()  // Call capturePackets and pass the pointer
-//                        }
+                        //                        withUnsafeMutablePointer(to: &insecurePacketCount) { pointer in
+                        tcpDumpWithPipe()  // Call capturePackets and pass the pointer
+                        //                        }
                     }
                     running = true
-//                    while(true) {
-//                        print(insecurePacketCount)
-//                    }
+                    //                    while(true) {
+                    //                        print(insecurePacketCount)
+                    //                    }
                 }
             }
             
-            Button("Stop") {
+            Button("Stop Capture") {
                 self.currentNumber = "2"
                 print(insecurePacketCount)
-//                appDelegate.quitApp()
+                //                appDelegate.quitApp()
             }
             Divider()
             
             HStack {
-                                Text("Unsecure Packets")
-                                    .font(.body)
-                                Spacer()
-                                Text("\(insecurePacketCount)")
-                                    .font(.body)
-                                    .frame(width: 40, alignment: .trailing)
-                            }
+                Text("Unsecure Packets: \(insecurePacketCount)")
+                //                                    .font(.body)
+                //                                Spacer()
+                //                                Text("\(insecurePacketCount)")
+                ////                                    .font(.body)
+                ////                                    .frame(width: 40, alignment: .trailing)
+            }
             
             Button("Quit") {
-//                analyzer.stop()
+                //                analyzer.stop()
                 NSApplication.shared.terminate(nil)
-
+                
             }.keyboardShortcut("q")
         }
     }
     
     public func tcpDumpWithPipe() {
-    //    let pipe = Pipe()  // Create an NSPipe equivalent in Swift
+        //    let pipe = Pipe()  // Create an NSPipe equivalent in Swift
         let tempDirectory = FileManager.default.temporaryDirectory
         let tempFileURL = tempDirectory.appendingPathComponent("my_temp_file.txt")
         do {
             try Data().write(to: tempFileURL, options: .atomic)
-    //        print("File cleared: \(fileURL.path)")
+            //        print("File cleared: \(fileURL.path)")
         } catch {
             print("Error clearing file: \(error.localizedDescription)")
         }
@@ -74,11 +74,11 @@ struct MenuBarApp: App {
         // Call the Objective-C method
         ProcessRunner.executeAdminProcess(withPipe: "/usr/sbin/tcpdump",
                                           arguments: [
-                                                        "-i", "any",
-                                                        "-s", "0",
-//                                                        "port", "80"
-                                                        // ,"or",
-                                                        "port", "443"
+                                            "-i", "any",
+                                            "-s", "0",
+                                            "port", "80"
+                                            // ,"or",
+                                            //                                                        "port", "443"
                                           ],
                                           pipe: tempFileURL)
         
@@ -95,14 +95,14 @@ struct MenuBarApp: App {
                     
                     for line in lines {
                         print("\(line)")
-//                        print(countPointer.pointee);
-//                        countPointer.pointee += 1
+                        //                        print(countPointer.pointee);
+                        //                        countPointer.pointee += 1
                         DispatchQueue.main.async {
                             // Use the pointer value to update the state (insecurePacketCount)
-                           print("doing a thing")
+                            //                           print("doing a thing")
                             insecurePacketCount += 1
-                            print("increment");
-//                            MenuBarApp.objectWillChange.send()
+                            //                            print("increment");
+                            //                            MenuBarApp.objectWillChange.send()
                         }
                     }
                     
@@ -126,7 +126,7 @@ struct MenuBarApp: App {
         } catch {
             print("Error handling file: \(error)")
         }
-
+        
     }
-
+    
 }
