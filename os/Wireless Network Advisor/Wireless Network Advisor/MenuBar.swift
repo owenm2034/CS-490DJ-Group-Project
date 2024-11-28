@@ -13,34 +13,29 @@ struct MenuBarApp: App {
     @State var currentNumber: String = "1"
     @State var insecurePacketCount: Int = 0
     @State var running = false
+    @State var action = "Start Capture"
     //    let runner = AsyncProcessRunner()
     var body: some Scene {
         //        MenuBarExtra(currentNumber, systemImage: "\(currentNumber).circle") {
         MenuBarExtra("\(insecurePacketCount)", systemImage: "network.badge.shield.half.filled") {
-            // 3
-            //            let analyzer = Analyzer()
-            Button("Start Capture") {
+        
+            Button("\(action)") {
                 if (!running) {
-                    //                    self.currentNumber = "1"
-                    
-                    //                    Task.detached {
                     DispatchQueue.global(qos: .background).async {
-                        //                        withUnsafeMutablePointer(to: &insecurePacketCount) { pointer in
-                        tcpDumpWithPipe()  // Call capturePackets and pass the pointer
-                        //                        }
+                        tcpDumpWithPipe()
                     }
-                    running = true
-                    //                    while(true) {
-                    //                        print(insecurePacketCount)
-                    //                    }
+                    running = true;
+                    action="Stop Capture";
+                } else {
+                    
                 }
             }
             
-            Button("Stop Capture") {
-                self.currentNumber = "2"
-                print(insecurePacketCount)
-                //                appDelegate.quitApp()
-            }
+//            Button("Stop Capture") {
+//                self.currentNumber = "2"
+//                print(insecurePacketCount)
+//                //                appDelegate.quitApp()
+//            }
             Divider()
             
             HStack {
@@ -53,9 +48,7 @@ struct MenuBarApp: App {
             }
             
             Button("Quit") {
-                //                analyzer.stop()
                 NSApplication.shared.terminate(nil)
-                
             }.keyboardShortcut("q")
         }
     }
@@ -78,7 +71,7 @@ struct MenuBarApp: App {
                                             "-s", "0",
                                             "port", "80"
                                             // ,"or",
-                                            //                                                        "port", "443"
+                                            // "port", "443"
                                           ],
                                           pipe: tempFileURL)
         
@@ -117,6 +110,7 @@ struct MenuBarApp: App {
             }
             
             // Keep the process running to read continuously
+            // not working over long periods of time
             let timer = Timer(timeInterval: 2.0, repeats: true) { _ in }
             RunLoop.current.add(timer, forMode: .default)
             
