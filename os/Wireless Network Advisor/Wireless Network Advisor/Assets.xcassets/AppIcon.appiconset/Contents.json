@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "network.badge.shield.half.filled@10x 4.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -58,11 +59,13 @@
       "size" : "128x128"
     },
     {
+      "filename" : "network.badge.shield.half.filled@3x.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
     },
     {
+      "filename" : "network.badge.shield.half.filled@10x 5.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "256x256"

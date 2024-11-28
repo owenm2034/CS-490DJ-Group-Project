@@ -45,6 +45,20 @@ struct MenuBarApp: App {
 
                 }
             }
+            
+            Button("send notif") {
+//                if !running {
+//                    DispatchQueue.global(qos: .background).async {
+//                        tcpDumpWithPipe()
+//                    }
+//                    running = true
+//                    action = "Stop Capture"
+                requestNotificationPermission()
+                scheduleNotification()
+//                } else {
+//
+//                }
+            }
 
             Divider()
 
