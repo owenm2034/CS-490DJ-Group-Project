@@ -12,8 +12,8 @@ import SwiftUI
 @main
 struct MenuBarApp: App {
     @State var currentNumber: String = "1"
-    @State var insecurePacketCount: Int = 0
-    @State var scannedPackets: Int = 0;
+    @State var unsecurePacketCount: Int = 0
+    @State var scannedPackets: Int = 0
     @State var running = false
     @State var action = "Start Capture"
 
@@ -30,7 +30,7 @@ struct MenuBarApp: App {
     var body: some Scene {
         //        MenuBarExtra(currentNumber, systemImage: "\(currentNumber).circle") {
         MenuBarExtra(
-            "\(insecurePacketCount)",
+            "\(unsecurePacketCount)",
             systemImage: "network.badge.shield.half.filled"
         ) {
 
@@ -45,27 +45,17 @@ struct MenuBarApp: App {
 
                 }
             }
-            
+
             Button("send notif") {
-//                if !running {
-//                    DispatchQueue.global(qos: .background).async {
-//                        tcpDumpWithPipe()
-//                    }
-//                    running = true
-//                    action = "Stop Capture"
                 requestNotificationPermission()
                 scheduleNotification()
-//                } else {
-//
-//                }
             }
 
             Divider()
 
             HStack {
-                Text("Unsecure Packets: \(insecurePacketCount)")
+                Text("Unsecure Packets: \(unsecurePacketCount)")
                 Text("Packets Scanned: \(scannedPackets)")
-                
             }
 
             Button("Quit") {
@@ -77,9 +67,12 @@ struct MenuBarApp: App {
     public func tcpDumpWithPipe() {
         //    let pipe = Pipe()  // Create an NSPipe equivalent in Swift
         let tempDirectory = FileManager.default.temporaryDirectory
-        let tempFileURL = tempDirectory.appendingPathComponent("my_temp_file.txt")
-        let regex = try! NSRegularExpression(pattern: #"^(\d{2}:\d{2}:\d{2}\.\d+).*?\b(\w+)(?=\s*>\s*\S+\.\d+:)"#);
-        
+        let tempFileURL = tempDirectory.appendingPathComponent(
+            "my_temp_file.txt")
+        let regex = try! NSRegularExpression(
+            pattern: #"^(\d{2}:\d{2}:\d{2}\.\d+).*?\b(\w+)(?=\s*>\s*\S+\.\d+:)"#
+        )
+
         do {
             try Data().write(to: tempFileURL, options: .atomic)
         } catch {
@@ -112,37 +105,32 @@ struct MenuBarApp: App {
                     { !$0.isEmpty }
 
                     for line in lines {
-                        if let match = regex.firstMatch(in: line, range: NSRange(line.startIndex..., in: line)) {
+                        if let match = regex.firstMatch(
+                            in: line,
+                            range: NSRange(line.startIndex..., in: line))
+                        {
                             let dateRange = Range(match.range(at: 1), in: line)!
-                            let protocolRange = Range(match.range(at: 2), in: line)!
-                            
+                            let protocolRange = Range(
+                                match.range(at: 2), in: line)!
+
                             let date = line[dateRange]
                             let protoc = line[protocolRange]
                             print("\(date) + \(protoc) + \(line)")
-                            
+
+                            if unsecurePacketCount % 500 == 1 {
+                                scheduleNotification(
+                                    date: String(date), ptc: String(protoc))
+                            }
                             DispatchQueue.main.async {
-                                // Use the pointer value to update the state (insecurePacketCount)
-                                //                           print("doing a thing")
-                                insecurePacketCount += 1
-//                                scannedPackets += 1
-                                //                            print("increment");
-                                //                            MenuBarApp.objectWillChange.send()
+                                unsecurePacketCount += 1
                             }
                         }
-                    
-                        
-                        
+
                         DispatchQueue.main.async {
-                            // Use the pointer value to update the state (insecurePacketCount)
-                            //                           print("doing a thing")
-//                            insecurePacketCount += 1
                             scannedPackets += 1
-                            //                            print("increment");
-                            //                            MenuBarApp.objectWillChange.send()
                         }
                     }
 
-                    // Move the file pointer to the beginning for rewriting
                     writeHandle.seek(toFileOffset: 0)
 
                     // Remove processed lines and write the remainder
@@ -152,13 +140,10 @@ struct MenuBarApp: App {
             }
 
             // Keep the process running to read continuously
-            // not working over long periods of time
+            // not working over long periods of time...?
             let timer = Timer(timeInterval: 2.0, repeats: true) { _ in }
             RunLoop.current.add(timer, forMode: .default)
-
-            // Start the RunLoop
             RunLoop.current.run()
-
         } catch {
             DispatchQueue.main.async {
                 print("Error handling file: \(error)")

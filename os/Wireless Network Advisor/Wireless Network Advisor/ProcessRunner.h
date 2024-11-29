@@ -14,7 +14,7 @@
 
 /**
  Runs a shell script as an administrator.
- 
+
  @param scriptPath The full path to the script to run.
  @param arguments An array of arguments to pass to the script.
  @param output A pointer to a string to capture the output of the script.
@@ -28,7 +28,9 @@
 
 + (BOOL)runProcessAsAdministratorPipeOutput:(NSString *)scriptPath
                               withArguments:(NSArray<NSString *> *)arguments
-                                       pipe:(NSURL *)outputPipe  // Pass NSPipe pointer
+                                       pipe:
+                                           (NSURL *)
+                                               outputPipe // Pass NSPipe pointer
                            errorDescription:(NSString **)errorDescription;
 
 + (void)executeAdminProcessWithPipe:(NSString *)scriptPath
