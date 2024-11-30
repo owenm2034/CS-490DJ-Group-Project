@@ -16,17 +16,7 @@ struct MenuBarApp: App {
     @State var scannedPackets: Int = 0
     @State var running = false
     @State var action = "Start Capture"
-    @State private var protocolStates: [String: ProtocolInfo] = [
-        "HTTP": ProtocolInfo(isEnabled: true, port: 80),
-        "FTP": ProtocolInfo(isEnabled: false, port: 21),
-        "Telnet": ProtocolInfo(isEnabled: false, port: 23),
-        "SMTP": ProtocolInfo(isEnabled: false, port: 25),
-        "Time": ProtocolInfo(isEnabled: false, port: 37),
-        "DNS": ProtocolInfo(isEnabled: false, port: 53),
-        "IMAP": ProtocolInfo(isEnabled: false, port: 143),
-        "SMB": ProtocolInfo(isEnabled: false, port: 445),
-        "LDAP": ProtocolInfo(isEnabled: false, port: 389),
-    ]
+    @StateObject private var viewModel = ProtocolStateViewModel()
 
     @State private var showPortNums = false
 
@@ -61,18 +51,28 @@ struct MenuBarApp: App {
             if !running {
                 Menu("Select Protocols") {
                     ForEach(
-                        protocolStates.sorted(by: { $0.key < $1.key }),
+                        viewModel.protocolStates.sorted(by: { $0.key < $1.key }
+                        ),
                         id: \.key
-                    ) {
-                        protocolName, protocolInfo in
-                        Toggle(isOn: binding(for: protocolName)) {
-                            if showPortNums {
-                                Text("\(protocolName): \(protocolInfo.port)")
-                            } else {
-                                Text(protocolName)
+                    ) { protocolName, protocolInfo in
+                        Button(action: {
+                            // Toggle the protocol's isEnabled value
+                            viewModel.toggleProtocolState(
+                                protocolName: protocolName)
+                        }) {
+                            HStack {
+                                Text(
+                                    "\(protocolName) (Port \(protocolInfo.port))"
+                                )
+                                Spacer()
+                                // Add a checkmark based on the toggle state
+                                if protocolInfo.isEnabled {
+                                    Image(systemName: "checkmark")
+                                }
                             }
                         }
                     }
+
                     Divider()
                     Button(action: {
                         showPortNums.toggle()
@@ -80,7 +80,8 @@ struct MenuBarApp: App {
                         Label(
                             showPortNums
                                 ? "Hide Port Numbers " : "Show Port Numbers",
-                            systemImage: showPortNums ? "checkmark" : "")
+                            systemImage: showPortNums ? "checkmark" : ""
+                        )
                     }
                 }
                 .menuStyle(BorderlessButtonMenuStyle())  // Optional styling
@@ -97,7 +98,9 @@ struct MenuBarApp: App {
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
             }.keyboardShortcut("q")
-        }
+        }  //.onChange(of: protocolStates) { _ in
+        // saveProtocolStates(protocolStates)
+        //}
     }
 
     public func tcpDumpWithPipe() {
@@ -120,15 +123,31 @@ struct MenuBarApp: App {
             "-s", "0",
         ]
 
-        let enabledPorts = protocolStates.filter { $0.value.isEnabled }.map {
-            "\($0.value.port)"
-        }
+        //        let enabledPorts = protocolStates.filter { $0.value.isEnabled }.map {
+        //            "\($0.value.port)"
+        //        }
+        //        if !enabledPorts.isEmpty {
+        //            for (index, port) in enabledPorts.enumerated() {
+        //                arguments.append(contentsOf: ["port", port])
+        //                if index != enabledPorts.count - 1 {
+        //                    arguments.append("or")
+        //                }
+        //            }
+        //        }
+
+        let enabledPorts = viewModel.protocolStates.filter {
+            $0.value.isEnabled
+        }.map { "\($0.value.port)" }
+
         if !enabledPorts.isEmpty {
-            for (index, port) in enabledPorts.enumerated() {
-                arguments.append(contentsOf: ["port", port])
-                if index != enabledPorts.count - 1 {
-                    arguments.append("or")
-                }
+            // Start building the arguments with "port" and the first port
+            arguments.append(contentsOf: ["port", enabledPorts[0]])
+
+            // Loop through the rest of the enabled ports, appending "or" between them
+            for port in enabledPorts.dropFirst() {
+                arguments.append("or")
+                arguments.append("port")
+                arguments.append(port)
             }
         }
 
@@ -200,15 +219,10 @@ struct MenuBarApp: App {
 
     }
 
-    private func binding(for protocolName: String) -> Binding<Bool> {
-        Binding(
-            get: { protocolStates[protocolName]?.isEnabled ?? false },
-            set: { protocolStates[protocolName]?.isEnabled = $0 }
-        )
-    }
-}
-
-struct ProtocolInfo {
-    var isEnabled: Bool
-    var port: Int
+//    private func binding(for protocolName: String) -> Binding<Bool> {
+//        Binding(
+//            get: { protocolStates[protocolName]?.isEnabled ?? false },
+//            set: { protocolStates[protocolName]?.isEnabled = $0 }
+//        )
+//    }
 }
