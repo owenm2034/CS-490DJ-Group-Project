@@ -16,9 +16,22 @@ struct MenuBarApp: App {
     @State var scannedPackets: Int = 0
     @State var running = false
     @State var action = "Start Capture"
+    @State private var protocolStates: [String: ProtocolInfo] = [
+        "HTTP": ProtocolInfo(isEnabled: true, port: 80),
+        "FTP": ProtocolInfo(isEnabled: false, port: 21),
+        "Telnet": ProtocolInfo(isEnabled: false, port: 23),
+        "SMTP": ProtocolInfo(isEnabled: false, port: 25),
+        "Time": ProtocolInfo(isEnabled: false, port: 37),
+        "DNS": ProtocolInfo(isEnabled: false, port: 53),
+        "IMAP": ProtocolInfo(isEnabled: false, port: 143),
+        "SMB": ProtocolInfo(isEnabled: false, port: 445),
+        "LDAP": ProtocolInfo(isEnabled: false, port: 389),
+    ]
+
+    @State private var showPortNums = false
 
     lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "InspectedPackets")  // Your .xcdatamodeld file name
+        let container = NSPersistentContainer(name: "ScannedPackedInfo")  // Your .xcdatamodeld file name
         container.loadPersistentStores { _, error in
             if let error = error {
                 fatalError("Unresolved error \(error)")
@@ -28,7 +41,6 @@ struct MenuBarApp: App {
     }()
 
     var body: some Scene {
-        //        MenuBarExtra(currentNumber, systemImage: "\(currentNumber).circle") {
         MenuBarExtra(
             "\(unsecurePacketCount)",
             systemImage: "network.badge.shield.half.filled"
@@ -46,10 +58,31 @@ struct MenuBarApp: App {
                 }
             }
 
-            Button("send notif") {
-                requestNotificationPermission()
-                scheduleNotification()
+            if !running {
+                Menu("Select Protocols") {
+                    ForEach(protocolStates.sorted(by: { $0.key < $1.key }), id: \.key) {
+                        protocolName, protocolInfo in
+                        Toggle(isOn: binding(for: protocolName)) {
+                            if showPortNums {
+                                Text("\(protocolName): \(protocolInfo.port)")
+                            } else {
+                                Text(protocolName)
+                            }
+                        }
+                    }
+                    Divider()
+                    Button(action: {
+                        showPortNums.toggle()
+                    }) {
+                        Label(
+                            showPortNums ? "Hide Port Numbers ": "Show Port Numbers",
+                            systemImage: showPortNums ? "checkmark" : "")
+                    }
+                }
+                .menuStyle(BorderlessButtonMenuStyle())  // Optional styling
+                .padding()
             }
+
 
             Divider()
 
@@ -152,4 +185,15 @@ struct MenuBarApp: App {
 
     }
 
+    private func binding(for protocolName: String) -> Binding<Bool> {
+        Binding(
+            get: { protocolStates[protocolName]?.isEnabled ?? false },
+            set: { protocolStates[protocolName]?.isEnabled = $0 }
+        )
+    }
+}
+
+struct ProtocolInfo {
+    var isEnabled: Bool
+    var port: Int
 }
