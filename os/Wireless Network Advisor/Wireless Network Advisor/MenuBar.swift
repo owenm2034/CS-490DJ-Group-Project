@@ -104,9 +104,7 @@ struct MenuBarApp: App {
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
             }.keyboardShortcut("q")
-        }  //.onChange(of: protocolStates) { _ in
-        // saveProtocolStates(protocolStates)
-        //}
+        }
     }
 
     public func tcpDumpWithPipe() {
@@ -128,18 +126,6 @@ struct MenuBarApp: App {
             "-i", "any",
             "-s", "0",
         ]
-
-        //        let enabledPorts = protocolStates.filter { $0.value.isEnabled }.map {
-        //            "\($0.value.port)"
-        //        }
-        //        if !enabledPorts.isEmpty {
-        //            for (index, port) in enabledPorts.enumerated() {
-        //                arguments.append(contentsOf: ["port", port])
-        //                if index != enabledPorts.count - 1 {
-        //                    arguments.append("or")
-        //                }
-        //            }
-        //        }
 
         let enabledPorts = viewModel.protocolStates.filter {
             $0.value.isEnabled
@@ -170,7 +156,8 @@ struct MenuBarApp: App {
 
             readHandle.readabilityHandler = { handle in
                 let data = handle.availableData
-                if let output = String(data: data, encoding: .utf8),
+                if !data.isEmpty,
+                    let output = String(data: data, encoding: .utf8),
                     !output.isEmpty
                 {
                     // Split the data by lines
@@ -187,18 +174,37 @@ struct MenuBarApp: App {
                                 match.range(at: 2), in: line)!
 
                             let date = line[dateRange]
-                            let protoc = line[protocolRange]
+                            //                            let protoc = line[protocolRange]
 
-                            //                            handle protocol type here
-                            print("\(date) + \(protoc) + \(line)")
+                            let protoc = line[protocolRange].lowercased()  // Convert the protocol to lowercase
 
-                            if unsecurePacketCount % 500 == 1 {
-                                scheduleNotification(
-                                    date: String(date), ptc: String(protoc))
+                            // Find the corresponding key-value pair in the dictionary
+                            if let protocolInfo = viewModel.protocolStates
+                                .first(where: { $0.key.lowercased() == protoc })
+                            {
+                                DispatchQueue.main.async {
+                                    unsecurePacketCount += 1
+                                    viewModel.incrementIncomingPacket(
+                                        for: protocolInfo.key)
+                                    scheduleNotification(
+                                        date: String(date), ptc: String(protoc)
+                                    )
+                                }
+                            } else {
+                                //                                print("Protocol not found!")
                             }
-                            DispatchQueue.main.async {
-                                unsecurePacketCount += 1
-                            }
+
+                            // Handle protocol type here
+//                            print("\(date) + \(protoc) + \(line)")
+
+//                            if unsecurePacketCount % 500 == 1 {
+//                                scheduleNotification(
+//                                    date: String(date), ptc: String(protoc))
+//                            }
+
+//                            DispatchQueue.main.async {
+//                                unsecurePacketCount += 1
+//                            }
                         }
 
                         DispatchQueue.main.async {
@@ -208,15 +214,15 @@ struct MenuBarApp: App {
 
                     writeHandle.seek(toFileOffset: 0)
 
-                    // Remove processed lines and write the remainder
+                    // Remove processed lines and write the remainder if necessary
                     let remainingData = Data()
-                    try? remainingData.write(to: tempFileURL, options: .atomic)
+                    if !remainingData.isEmpty {
+                        try? remainingData.write(
+                            to: tempFileURL, options: .atomic)
+                    }
                 }
             }
-
-            // Keep the process running to read continuously
-            // not working over long periods of time...?
-            let timer = Timer(timeInterval: 2.0, repeats: true) { _ in }
+            let timer = Timer(timeInterval: 0.5, repeats: true) { _ in }
             RunLoop.current.add(timer, forMode: .default)
             RunLoop.current.run()
         } catch {
@@ -226,11 +232,4 @@ struct MenuBarApp: App {
         }
 
     }
-
-    //    private func binding(for protocolName: String) -> Binding<Bool> {
-    //        Binding(
-    //            get: { protocolStates[protocolName]?.isEnabled ?? false },
-    //            set: { protocolStates[protocolName]?.isEnabled = $0 }
-    //        )
-    //    }
 }
