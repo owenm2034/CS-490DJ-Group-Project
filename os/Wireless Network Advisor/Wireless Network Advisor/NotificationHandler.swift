@@ -41,10 +41,10 @@ func scheduleNotification() {
     }
 }
 
-func scheduleNotification(date: String, ptc: String) {
+func scheduleNotification(date: String, ptc: String, origin: String) {
     let content = UNMutableNotificationContent()
-    content.title = "Unsecure Packet Found"
-    content.body = "\(date), \(ptc)!"
+    content.title = "Unsecure Packet: \(ptc)"
+    content.body = "Origin: \(origin)"
     content.sound = .default
 
     let trigger = UNTimeIntervalNotificationTrigger(

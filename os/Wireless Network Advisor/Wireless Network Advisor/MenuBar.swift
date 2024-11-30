@@ -30,100 +30,6 @@ struct MenuBarApp: App {
         return container
     }()
 
-//    var body: some Scene {
-//        MenuBarExtra(
-//            "\(unsecurePacketCount)",
-//            systemImage: "network.badge.shield.half.filled"
-//        ) {
-//
-//            Button("\(action)") {
-//                if !running {
-//                    DispatchQueue.global(qos: .background).async {
-//                        tcpDumpWithPipe()
-//                    }
-//                    running = true
-//                    action = "Stop Capture"
-//                } else {
-//
-//                }
-//            }
-//
-//            if !running {
-//                Menu("Select Protocols") {
-//                    Text("Select none to monitor all.")
-//                    ForEach(
-//                        viewModel.protocolStates.sorted(by: { $0.key < $1.key }
-//                        ),
-//                        id: \.key
-//                    ) { protocolName, protocolInfo in
-//                        Button(action: {
-//                            // Toggle the protocol's isEnabled value
-//                            viewModel.toggleProtocolState(
-//                                protocolName: protocolName)
-//                        }) {
-//                            HStack {
-//                                Text(
-//                                    showPortNums
-//                                        ? "\(protocolName) : \(protocolInfo.port)"
-//                                        : "\(protocolName)"
-//                                )
-//                                Spacer()
-//                                // Add a checkmark based on the toggle state
-//                                if protocolInfo.isEnabled {
-//                                    Image(systemName: "checkmark")
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                    Divider()
-//                    Button(action: {
-//                        showPortNums.toggle()
-//                    }) {
-//                        HStack {
-//                            Text(
-//                                "Show Port Numbers"
-//                            )
-//                            Spacer()
-//                            if showPortNums {
-//                                Image(systemName: "checkmark")
-//                            }
-//                        }
-//                    }
-//                }
-//                .menuStyle(BorderlessButtonMenuStyle())  // Optional styling
-//                .padding()
-//            }
-//
-//            Divider()
-//
-//            //            HStack {
-//            Menu("Unsecure Packets: \(unsecurePacketCount)") {
-//                let allDisabled = viewModel.protocolStates.values.allSatisfy {
-//                    protocolInfo in
-//                    !protocolInfo.isEnabled
-//                }
-//
-//                ForEach(
-//                    viewModel.protocolStates.sorted(by: { $0.key < $1.key }
-//                    ),
-//                    id: \.key
-//                ) { protocolName, protocolInfo in
-//                    if allDisabled {
-//
-//                    }
-//                    Text(
-//                        "\(protocolName) : \(protocolName.unsecurePacketCount)")
-//                }
-//            }
-//            Text("Packets Scanned: \(scannedPackets)")
-//            //            }
-//
-//            Button("Quit") {
-//                NSApplication.shared.terminate(nil)
-//            }.keyboardShortcut("q")
-//        }
-//    }
     var body: some Scene {
         MenuBarExtra(
             "\(unsecurePacketCount)",
@@ -214,7 +120,8 @@ struct MenuBarApp: App {
         let tempFileURL = tempDirectory.appendingPathComponent(
             "my_temp_file.txt")
         let regex = try! NSRegularExpression(
-            pattern: #"^(\d{2}:\d{2}:\d{2}\.\d+).*?\b(\w+)(?=\s*>\s*\S+\.\d+:)"#
+//            pattern: #"^(\d{2}:\d{2}:\d{2}\.\d+).*?\b(\w+)(?=\s*>\s*\S+\.\d+:)"#
+            pattern: #"(\d{2}:\d{2}:\d{2}\.\d+)\s\w+\s(.*?)\.(\w+)(?=\s*>\s*\S+\.\d+:)"#
         )
 
         do {
@@ -271,13 +178,14 @@ struct MenuBarApp: App {
                             range: NSRange(line.startIndex..., in: line))
                         {
                             let dateRange = Range(match.range(at: 1), in: line)!
-                            let protocolRange = Range(
-                                match.range(at: 2), in: line)!
+                            let originRange = Range(match.range(at:2), in: line)!
+                            let protocolRange = Range(match.range(at: 3), in: line)!
 
                             let date = line[dateRange]
                             //                            let protoc = line[protocolRange]
 
                             let protoc = line[protocolRange].lowercased()  // Convert the protocol to lowercase
+                            let origin = line[originRange];
 
                             // Find the corresponding key-value pair in the dictionary
                             if let protocolInfo = viewModel.protocolStates
@@ -288,7 +196,7 @@ struct MenuBarApp: App {
                                     viewModel.incrementIncomingPacket(
                                         for: protocolInfo.key)
                                     scheduleNotification(
-                                        date: String(date), ptc: String(protoc)
+                                        date: String(date), ptc: String(protoc), origin: String(origin)
                                     )
                                 }
                             }
