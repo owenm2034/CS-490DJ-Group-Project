@@ -60,7 +60,10 @@ struct MenuBarApp: App {
 
             if !running {
                 Menu("Select Protocols") {
-                    ForEach(protocolStates.sorted(by: { $0.key < $1.key }), id: \.key) {
+                    ForEach(
+                        protocolStates.sorted(by: { $0.key < $1.key }),
+                        id: \.key
+                    ) {
                         protocolName, protocolInfo in
                         Toggle(isOn: binding(for: protocolName)) {
                             if showPortNums {
@@ -75,14 +78,14 @@ struct MenuBarApp: App {
                         showPortNums.toggle()
                     }) {
                         Label(
-                            showPortNums ? "Hide Port Numbers ": "Show Port Numbers",
+                            showPortNums
+                                ? "Hide Port Numbers " : "Show Port Numbers",
                             systemImage: showPortNums ? "checkmark" : "")
                     }
                 }
                 .menuStyle(BorderlessButtonMenuStyle())  // Optional styling
                 .padding()
             }
-
 
             Divider()
 
@@ -112,15 +115,27 @@ struct MenuBarApp: App {
             print("Error clearing file: \(error.localizedDescription)")
         }
 
+        var arguments: [String] = [
+            "-i", "any",
+            "-s", "0",
+        ]
+
+        let enabledPorts = protocolStates.filter { $0.value.isEnabled }.map {
+            "\($0.value.port)"
+        }
+        if !enabledPorts.isEmpty {
+            for (index, port) in enabledPorts.enumerated() {
+                arguments.append(contentsOf: ["port", port])
+                if index != enabledPorts.count - 1 {
+                    arguments.append("or")
+                }
+            }
+        }
+
         // Call the Objective-C method
         ProcessRunner.executeAdminProcess(
             withPipe: "/usr/sbin/tcpdump",
-            arguments: [
-                "-i", "any",
-                "-s", "0",
-                "port", "80", "or",
-                "port", "443",
-            ],
+            arguments: arguments,
             pipe: tempFileURL)
 
         // Asynchronously read the output
