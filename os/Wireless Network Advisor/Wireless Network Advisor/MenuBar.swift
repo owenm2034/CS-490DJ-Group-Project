@@ -62,7 +62,9 @@ struct MenuBarApp: App {
                         }) {
                             HStack {
                                 Text(
-                                    "\(protocolName) (Port \(protocolInfo.port))"
+                                    showPortNums
+                                        ? "\(protocolName) : \(protocolInfo.port)"
+                                        : "\(protocolName)"
                                 )
                                 Spacer()
                                 // Add a checkmark based on the toggle state
@@ -77,11 +79,15 @@ struct MenuBarApp: App {
                     Button(action: {
                         showPortNums.toggle()
                     }) {
-                        Label(
-                            showPortNums
-                                ? "Hide Port Numbers " : "Show Port Numbers",
-                            systemImage: showPortNums ? "checkmark" : ""
-                        )
+                        HStack {
+                            Text(
+                                "Show Port Numbers"
+                            )
+                            Spacer()
+                            if showPortNums {
+                                Image(systemName: "checkmark")
+                            }
+                        }
                     }
                 }
                 .menuStyle(BorderlessButtonMenuStyle())  // Optional styling
@@ -182,6 +188,8 @@ struct MenuBarApp: App {
 
                             let date = line[dateRange]
                             let protoc = line[protocolRange]
+
+                            //                            handle protocol type here
                             print("\(date) + \(protoc) + \(line)")
 
                             if unsecurePacketCount % 500 == 1 {
@@ -219,10 +227,10 @@ struct MenuBarApp: App {
 
     }
 
-//    private func binding(for protocolName: String) -> Binding<Bool> {
-//        Binding(
-//            get: { protocolStates[protocolName]?.isEnabled ?? false },
-//            set: { protocolStates[protocolName]?.isEnabled = $0 }
-//        )
-//    }
+    //    private func binding(for protocolName: String) -> Binding<Bool> {
+    //        Binding(
+    //            get: { protocolStates[protocolName]?.isEnabled ?? false },
+    //            set: { protocolStates[protocolName]?.isEnabled = $0 }
+    //        )
+    //    }
 }
