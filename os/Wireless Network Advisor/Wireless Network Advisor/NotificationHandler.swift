@@ -47,7 +47,6 @@ func scheduleNotification(date: String, ptc: String) {
     content.body = "\(date), \(ptc)!"
     content.sound = .default
 
-    // Trigger after 5 seconds
     let trigger = UNTimeIntervalNotificationTrigger(
         timeInterval: 0.1, repeats: false)
 

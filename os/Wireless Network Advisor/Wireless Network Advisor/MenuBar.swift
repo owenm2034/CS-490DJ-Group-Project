@@ -30,12 +30,106 @@ struct MenuBarApp: App {
         return container
     }()
 
+//    var body: some Scene {
+//        MenuBarExtra(
+//            "\(unsecurePacketCount)",
+//            systemImage: "network.badge.shield.half.filled"
+//        ) {
+//
+//            Button("\(action)") {
+//                if !running {
+//                    DispatchQueue.global(qos: .background).async {
+//                        tcpDumpWithPipe()
+//                    }
+//                    running = true
+//                    action = "Stop Capture"
+//                } else {
+//
+//                }
+//            }
+//
+//            if !running {
+//                Menu("Select Protocols") {
+//                    Text("Select none to monitor all.")
+//                    ForEach(
+//                        viewModel.protocolStates.sorted(by: { $0.key < $1.key }
+//                        ),
+//                        id: \.key
+//                    ) { protocolName, protocolInfo in
+//                        Button(action: {
+//                            // Toggle the protocol's isEnabled value
+//                            viewModel.toggleProtocolState(
+//                                protocolName: protocolName)
+//                        }) {
+//                            HStack {
+//                                Text(
+//                                    showPortNums
+//                                        ? "\(protocolName) : \(protocolInfo.port)"
+//                                        : "\(protocolName)"
+//                                )
+//                                Spacer()
+//                                // Add a checkmark based on the toggle state
+//                                if protocolInfo.isEnabled {
+//                                    Image(systemName: "checkmark")
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                    Divider()
+//                    Button(action: {
+//                        showPortNums.toggle()
+//                    }) {
+//                        HStack {
+//                            Text(
+//                                "Show Port Numbers"
+//                            )
+//                            Spacer()
+//                            if showPortNums {
+//                                Image(systemName: "checkmark")
+//                            }
+//                        }
+//                    }
+//                }
+//                .menuStyle(BorderlessButtonMenuStyle())  // Optional styling
+//                .padding()
+//            }
+//
+//            Divider()
+//
+//            //            HStack {
+//            Menu("Unsecure Packets: \(unsecurePacketCount)") {
+//                let allDisabled = viewModel.protocolStates.values.allSatisfy {
+//                    protocolInfo in
+//                    !protocolInfo.isEnabled
+//                }
+//
+//                ForEach(
+//                    viewModel.protocolStates.sorted(by: { $0.key < $1.key }
+//                    ),
+//                    id: \.key
+//                ) { protocolName, protocolInfo in
+//                    if allDisabled {
+//
+//                    }
+//                    Text(
+//                        "\(protocolName) : \(protocolName.unsecurePacketCount)")
+//                }
+//            }
+//            Text("Packets Scanned: \(scannedPackets)")
+//            //            }
+//
+//            Button("Quit") {
+//                NSApplication.shared.terminate(nil)
+//            }.keyboardShortcut("q")
+//        }
+//    }
     var body: some Scene {
         MenuBarExtra(
             "\(unsecurePacketCount)",
             systemImage: "network.badge.shield.half.filled"
         ) {
-
+            
             Button("\(action)") {
                 if !running {
                     DispatchQueue.global(qos: .background).async {
@@ -43,22 +137,18 @@ struct MenuBarApp: App {
                     }
                     running = true
                     action = "Stop Capture"
-                } else {
-
                 }
             }
 
             if !running {
                 Menu("Select Protocols") {
+                    Text("Select none to monitor all.")
                     ForEach(
-                        viewModel.protocolStates.sorted(by: { $0.key < $1.key }
-                        ),
+                        viewModel.protocolStates.sorted(by: { $0.key < $1.key }),
                         id: \.key
                     ) { protocolName, protocolInfo in
                         Button(action: {
-                            // Toggle the protocol's isEnabled value
-                            viewModel.toggleProtocolState(
-                                protocolName: protocolName)
+                            viewModel.toggleProtocolState(protocolName: protocolName)
                         }) {
                             HStack {
                                 Text(
@@ -67,7 +157,6 @@ struct MenuBarApp: App {
                                         : "\(protocolName)"
                                 )
                                 Spacer()
-                                // Add a checkmark based on the toggle state
                                 if protocolInfo.isEnabled {
                                     Image(systemName: "checkmark")
                                 }
@@ -80,9 +169,7 @@ struct MenuBarApp: App {
                         showPortNums.toggle()
                     }) {
                         HStack {
-                            Text(
-                                "Show Port Numbers"
-                            )
+                            Text("Show Port Numbers")
                             Spacer()
                             if showPortNums {
                                 Image(systemName: "checkmark")
@@ -96,16 +183,30 @@ struct MenuBarApp: App {
 
             Divider()
 
-            HStack {
-                Text("Unsecure Packets: \(unsecurePacketCount)")
-                Text("Packets Scanned: \(scannedPackets)")
+            // Unsecure Packets Menu
+            Menu("Unsecure Packets: \(unsecurePacketCount)") {
+                // Check if all protocols are disabled
+                let allDisabled = viewModel.protocolStates.values.allSatisfy { !$0.isEnabled }
+
+                ForEach(
+                    viewModel.protocolStates.sorted(by: { $0.key < $1.key }),
+                    id: \.key
+                ) { protocolName, protocolInfo in
+                    // Only show protocols if all protocols are disabled
+                    if allDisabled {
+                        Text("\(protocolName) : \(protocolInfo.unsecurePacketCount)")
+                    }
+                }
             }
+
+            Text("Packets Scanned: \(scannedPackets)")
 
             Button("Quit") {
                 NSApplication.shared.terminate(nil)
             }.keyboardShortcut("q")
         }
     }
+
 
     public func tcpDumpWithPipe() {
         //    let pipe = Pipe()  // Create an NSPipe equivalent in Swift
@@ -190,21 +291,7 @@ struct MenuBarApp: App {
                                         date: String(date), ptc: String(protoc)
                                     )
                                 }
-                            } else {
-                                //                                print("Protocol not found!")
                             }
-
-                            // Handle protocol type here
-//                            print("\(date) + \(protoc) + \(line)")
-
-//                            if unsecurePacketCount % 500 == 1 {
-//                                scheduleNotification(
-//                                    date: String(date), ptc: String(protoc))
-//                            }
-
-//                            DispatchQueue.main.async {
-//                                unsecurePacketCount += 1
-//                            }
                         }
 
                         DispatchQueue.main.async {
