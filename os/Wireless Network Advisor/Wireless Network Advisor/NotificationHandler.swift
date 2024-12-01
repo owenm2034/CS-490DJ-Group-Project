@@ -44,7 +44,7 @@ func scheduleNotification() {
 func scheduleNotification(date: String, ptc: String, origin: String) {
     let content = UNMutableNotificationContent()
     content.title = "Unsecure Packet: \(ptc)"
-    content.body = "Origin: \(origin)"
+    content.body = "Origin: \(origin)\nPlease consider switching to a private network."
     content.sound = .default
 
     let trigger = UNTimeIntervalNotificationTrigger(
